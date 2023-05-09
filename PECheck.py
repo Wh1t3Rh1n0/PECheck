@@ -21,61 +21,73 @@ def add_pe_checksum(filename):
 
 
 
-# Print usage, if appropriate.
-if len(sys.argv) == 1 or '-h' in sys.argv or '--help' in sys.argv:
-    print(f'''
-PECheck // 2023-05-09 by Wh1t3Rh1n0
-=======    ------------------------
+if __name__ == "__main__":
 
-Checks the Portable Executable (PE) checksum of a given EXE file.
+    # Print usage, if appropriate.
+    if len(sys.argv) == 1 or '-h' in sys.argv or '--help' in sys.argv:
+        print(f'''
+    PECheck // 2023-05-09 by Wh1t3Rh1n0
+    =======    ------------------------
 
-If the PE checksum is not valid, this tool will optionally generate a valid
-PE checksum, write it to the file, and then check the file again to confirm
-that a valid PE checksum is now present.
+    Checks the Portable Executable (PE) checksum of a given EXE file.
 
-Usage: {sys.argv[0]} <TARGET PE (EXE) FILE>
-    ''')
-    exit()
+    If the PE checksum is not valid, this tool will optionally generate a valid
+    PE checksum, write it to the file, and then check the file again to confirm
+    that a valid PE checksum is now present.
+
+    Usage: {sys.argv[0]} <Target PE (EXE) File> [Optional -y to skip prompts]
+        ''')
+        exit()
+
+    # Optionally skip the prompt before generating a new checksum.
+    if '-y' in sys.argv or '-Y' in sys.argv:
+        skip_prompts = True
+    else:
+        skip_prompts = False
 
 
-# Check the checksum of the given file.
-filename = sys.argv[1]
+    # Check the checksum of the given file.
+    filename = sys.argv[1]
 
-print(f"Checking the PE checksum of {filename}")
-checksum_is_valid = valid_pe_checksum(filename)
+    print(f"Checking the PE checksum of {filename}")
+    checksum_is_valid = valid_pe_checksum(filename)
 
 
-# If the checksum is not valid/not present, prompt to add one.
-if checksum_is_valid:
-    print(f"GOOD CHECKSUM DETECTED on {filename}!")
-    exit()
-else:
-    print(f"ERROR: Checksum is missing or invalid!")
+    # If the checksum is not valid/not present, prompt to add one.
+    if checksum_is_valid:
+        print(f"GOOD CHECKSUM DETECTED on {filename}!")
+        exit()
+    else:
+        print(f"ERROR: Checksum is missing or invalid!")
 
-write_new_checksum = input(f"\nWrite new checksum to {filename} (y/n)? ")
 
-if write_new_checksum.lower() != 'y':
-    print("Operation canceled by user. Quitting...")
-    exit()
-else:
+    if not skip_prompts:
+        write_new_checksum = input(f"\nWrite new checksum to {filename} (y/n)? ")
+
+        if write_new_checksum.lower() != 'y':
+            print("Operation canceled by user. Quitting...")
+            exit()
+    else:
+        print()
+
     print(f"Writing new checksum to {filename}...")
     add_pe_checksum(filename)
     print(f"Done writing new checksum!")
 
 
-# Check the checksum of the file again to verify that it was written
-# successfully.
-print("\nVerifying that PE checksum was successfully written...")
+    # Check the checksum of the file again to verify that it was written
+    # successfully.
+    print("\nVerifying that PE checksum was successfully written...")
 
-new_checksum_is_valid = valid_pe_checksum(filename)
+    new_checksum_is_valid = valid_pe_checksum(filename)
 
-if not new_checksum_is_valid:
-    print("\nERROR: The new checksum was not written to the file for some reason.")
-    exit()
-elif new_checksum_is_valid:
-    print(f"SUCCESS! New PE checksum written to {filename} and verified!")
-    exit()
+    if not new_checksum_is_valid:
+        print("\nERROR: The new checksum was not written to the file for some reason.")
+        exit()
+    elif new_checksum_is_valid:
+        print(f"SUCCESS! New PE checksum written to {filename} and verified!")
+        exit()
 
 
-print("ERROR: Something weird happened and I don't know what.")
-print("The program was never supposed to reach this point. :(")
+    print("ERROR: Something weird happened and I don't know what.")
+    print("The program was never supposed to reach this point. :(")
