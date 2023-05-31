@@ -63,3 +63,8 @@ SUCCESS! New PE checksum written to Bginfo.exe and verified!
 ## References
 
 - GitHub issue for PyInstaller that initially brought my attention to the PE header and its effects on AV scores in VirusTotal: https://github.com/pyinstaller/pyinstaller/issues/5579
+
+
+## Changelog
+
+- 2023-05-31: Added `fast_load=True` to greatly improve performance. (Thanks to [Joff Thyer](https://twitter.com/joff_thyer) for pointing this out!)

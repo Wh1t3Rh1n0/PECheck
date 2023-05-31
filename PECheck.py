@@ -7,7 +7,7 @@ import sys
 def valid_pe_checksum(filename):
     """Return True if the given PE (EXE) file has a valid PE checksum."""
 
-    pe = pefile.PE(filename)
+    pe = pefile.PE(filename, fast_load=True)
     return pe.verify_checksum()
 
 
